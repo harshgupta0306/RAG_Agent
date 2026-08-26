@@ -1,0 +1,8 @@
+langchain
+langchain-community
+langchain-mistralai
+langgraph
+python-dotenv
+pypdf
+langchain-text-splitters
+rank-bm25

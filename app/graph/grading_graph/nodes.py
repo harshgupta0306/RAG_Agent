@@ -12,7 +12,7 @@ load_dotenv()
 # ============================================================
 
 llm = ChatMistralAI(
-    model="mistral-large-latest",
+    model="mistral-small-latest",
     temperature=0,
 )
 
@@ -60,11 +60,10 @@ def grade_answer(state):
     answer = state["answer"]
 
     prompt = f"""
-You are evaluating a RAG system.
+You are evaluating the quality of a RAG answer.
 
-Determine whether the generated answer
-is adequately supported by the retrieved
-context and actually answers the question.
+Determine whether the answer correctly answers
+the user's question using the retrieved context.
 
 Question:
 
@@ -78,21 +77,34 @@ Generated Answer:
 
 {answer}
 
-Rules:
+Evaluation rules:
 
-1. The answer must address the question.
-2. Important claims must be supported by
-   the retrieved context.
-3. The answer must not invent information.
-4. If important information is missing,
-   mark the answer as bad.
+1. The answer must directly address the user's question.
 
-Return a grade of either:
+2. The answer must be supported by the retrieved context.
 
-good
-bad
+3. Do not require information that is not present
+   in the retrieved context.
 
-Also provide concise feedback.
+4. Do not mark an answer BAD merely because it
+   does not contain implementation details that
+   were not provided in the context.
+
+5. If the context genuinely lacks the information
+   required to answer the question, mark it BAD.
+
+6. If the answer correctly answers the question
+   using the available context, mark it GOOD.
+
+Return your evaluation in this format:
+
+GRADE: good
+FEEDBACK: <short explanation>
+
+or
+
+GRADE: bad
+FEEDBACK: <short explanation>
 """
 
     result = grader_llm.invoke(prompt)

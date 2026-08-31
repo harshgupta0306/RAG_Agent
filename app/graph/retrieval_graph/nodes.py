@@ -1,40 +1,35 @@
-from app.ingestion.storage import load_chunks
-from app.retrieval.retrieval_pipeline import (
-    RetrievalPipeline,
+from app.resources.retrieval_resources import (
+    get_vector_store,
+    get_bm25,
+    get_reranker,
 )
-from app.retrieval.vector_store import load_vector_store
-from app.retrieval.bm25 import (
-    BM25Retriever
+
+from app.retrieval.fusion import (
+    reciprocal_rank_fusion,
 )
-from app.retrieval.fusion import (reciprocal_rank_fusion)
-from app.retrieval.reranker import (Reranker)
 
-vector_store = load_vector_store()
-
-retrieval_pipeline = RetrievalPipeline()
-
-documents = load_chunks()
-
-reranker = Reranker() 
-
-bm25 = BM25Retriever(documents)
 
 def semantic_search_node(state):
 
     query = state["query"]
 
+    vector_store = get_vector_store()
+
     documents = vector_store.similarity_search(
-            query,
-            k=20,
-        )
+        query,
+        k=20,
+    )
 
     return {
         "documents": documents
     }
 
+
 def keyword_search_node(state):
 
     query = state["query"]
+
+    bm25 = get_bm25()
 
     results = bm25.search(
         query,
@@ -50,25 +45,34 @@ def keyword_search_node(state):
         "bm25_documents": documents
     }
 
+
 def hybrid_search_node(state):
 
-    query = state["query"]
     semantic = state["documents"]
-    bm25 = state["bm25_documents"]
+
+    bm25_documents = state[
+        "bm25_documents"
+    ]
 
     documents = reciprocal_rank_fusion(
-        [semantic,bm25]
+        [
+            semantic,
+            bm25_documents,
+        ]
     )
 
     return {
         "documents": documents
     }
 
+
 def rerank_node(state):
 
     query = state["query"]
 
     documents = state["documents"]
+
+    reranker = get_reranker()
 
     results = reranker.rerank(
         query=query,

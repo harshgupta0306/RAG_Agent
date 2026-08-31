@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from langchain_core.documents import Document
 
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import (
     StateGraph,
     START,
@@ -28,6 +29,8 @@ from app.graph.state import RAGState
 
 
 MAX_RETRIES = 2
+
+checkpointer = InMemorySaver()
 
 
 def grade_route(state):
@@ -127,4 +130,7 @@ builder.add_edge(
 # COMPILE
 # ============================================================
 
-main_graph = builder.compile()
+
+main_graph = builder.compile(
+    checkpointer=checkpointer
+)

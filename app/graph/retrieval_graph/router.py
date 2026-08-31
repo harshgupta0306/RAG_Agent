@@ -1,10 +1,11 @@
 from typing import Literal
 
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from langchain_mistralai import ChatMistralAI
 
-
+load_dotenv()
 class SearchRoute(BaseModel):
 
     route: Literal[
@@ -20,7 +21,7 @@ class SearchRoute(BaseModel):
 
 
 llm = ChatMistralAI(
-    model="mistral-large-latest",
+    model="mistral-small-latest",
     temperature=0,
 )
 

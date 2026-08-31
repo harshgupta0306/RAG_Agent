@@ -4,7 +4,7 @@ from langchain_mistralai import ChatMistralAI
 load_dotenv()
 
 llm = ChatMistralAI(
-    model="mistral-large-latest",
+    model="mistral-small-latest",
     temperature=0,
 )
 
@@ -44,62 +44,29 @@ SOURCE {i}
 def generate_answer(state):
 
     query = state["query"]
-
     context = state["context"]
 
-    answer = state["answer"]
-
     prompt = f"""
-You are evaluating the quality of a RAG answer.
+    You are a RAG assistant.
 
-Your job is NOT to reward the answer for
-simply admitting that information is missing.
+    Answer the user's question using ONLY the
+    retrieved context provided below.
 
-Determine whether the answer actually
-satisfies the user's question.
+    If the context does not contain enough
+    information to answer the question, clearly
+    say that the available context is insufficient.
 
-Question:
+    Do not invent or assume information that is
+    not present in the context.
 
-{query}
+    Question:
+    {query}
 
-Retrieved Context:
+    Retrieved Context:
+    {context}
 
-{context}
-
-Generated Answer:
-
-{answer}
-
-Evaluation rules:
-
-1. The answer must actually answer the question.
-
-2. The answer must be supported by the
-   retrieved context.
-
-3. If the context does not contain enough
-   information to answer the question,
-   the answer is BAD.
-
-4. An answer that merely says "I don't know",
-   "the context does not contain enough
-   information", or similar is BAD when
-   the user's question expects an answer.
-
-5. Do not reward an answer simply because
-   it avoids hallucination.
-
-6. If important information is missing,
-   mark the answer BAD.
-
-Return:
-
-good
-or
-bad
-
-Also explain your decision.
-"""
+    Provide a clear and direct answer to the question.
+    """
 
     response = llm.invoke(prompt)
 

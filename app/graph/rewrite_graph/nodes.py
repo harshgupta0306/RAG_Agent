@@ -3,7 +3,7 @@ from langchain_mistralai import ChatMistralAI
 
 load_dotenv()
 llm = ChatMistralAI(
-    model="mistral-large-latest",
+    model="mistral-small-latest",
     temperature=0,
 )
 

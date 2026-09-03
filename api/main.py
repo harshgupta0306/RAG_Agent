@@ -1,11 +1,20 @@
 import json
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from uuid import uuid4
 
+from fastapi import (
+    File,
+    HTTPException,
+    UploadFile,
+)
+
+from app.ingestion.pipeline import ingest_file
 from app.graph.main_graph import main_graph
 
 app = FastAPI(
@@ -371,3 +380,77 @@ async def resume_from_checkpoint(
         event_generator(),
         media_type="text/event-stream",
     )
+
+UPLOAD_DIR = Path("data/documents")
+
+
+@app.post("/api/documents/upload")
+async def upload_document(
+    file: UploadFile = File(...)):
+
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Filename is required",
+        )
+
+    extension = (
+        Path(file.filename)
+        .suffix
+        .lower()
+    )
+
+    if extension not in {
+        ".pdf",
+        ".docx",
+        ".md",
+        ".txt",
+    }:
+        raise HTTPException(
+            status_code=400,
+            detail="Unsupported file type",
+        )
+
+    UPLOAD_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    document_id = str(uuid4())
+
+    file_path = (
+        UPLOAD_DIR /
+        f"{document_id}{extension}"
+    )
+
+    try:
+
+        with file_path.open("wb") as buffer:
+
+            while chunk := await file.read(
+                1024 * 1024
+            ):
+                buffer.write(chunk)
+
+        chunks = ingest_file(
+            str(file_path)
+        )
+
+    except Exception as exc:
+
+        file_path.unlink(
+            missing_ok=True
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        )
+
+    return {
+        "document_id": document_id,
+        "file_name": file.filename,
+        "file_type": extension.lstrip("."),
+        "chunks": len(chunks),
+        "status": "indexed",
+    }

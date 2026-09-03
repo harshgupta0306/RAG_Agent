@@ -244,3 +244,45 @@ export async function resumeFromCheckpoint(
     }
   }
 }
+
+
+export interface DocumentUploadResponse {
+  document_id: string;
+  file_name: string;
+  file_type: string;
+  chunks: number;
+  status: string;
+}
+
+
+export const uploadDocument = async (
+  file: File
+): Promise<DocumentUploadResponse> => {
+
+  const formData = new FormData();
+
+  formData.append(
+    "file",
+    file
+  );
+
+  const response = await fetch(
+    `${API_URL}/api/documents/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+
+    const error = await response.json();
+
+    throw new Error(
+      error.detail ||
+      "Failed to upload document"
+    );
+  }
+
+  return response.json();
+};

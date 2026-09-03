@@ -37,3 +37,40 @@ def load_markdown_documents(
         documents.append(document)
 
     return documents
+
+
+from pathlib import Path
+
+from langchain_core.documents import Document
+
+from app.ingestion.loaders import (
+    load_pdf,
+    load_docx,
+    load_markdown,
+    load_text,
+)
+
+
+def load_document(
+    file_path: str,
+) -> list[Document]:
+
+    extension = Path(
+        file_path
+    ).suffix.lower()
+
+    if extension == ".pdf":
+        return load_pdf(file_path)
+
+    if extension == ".docx":
+        return load_docx(file_path)
+
+    if extension == ".md":
+        return load_markdown(file_path)
+
+    if extension == ".txt":
+        return load_text(file_path)
+
+    raise ValueError(
+        f"Unsupported file type: {extension}"
+    )

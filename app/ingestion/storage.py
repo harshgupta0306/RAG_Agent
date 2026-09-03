@@ -29,3 +29,11 @@ def load_chunks() -> list[Document]:
     ) as file:
 
         return pickle.load(file)
+
+
+def add_chunks(chunks: list[Document] ):
+    previous_docs = load_chunks()
+
+    updated_docs = previous_docs + chunks
+
+    save_chunks(updated_docs)

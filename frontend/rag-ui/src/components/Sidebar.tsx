@@ -2,6 +2,7 @@ import type {
   ConversationSummary,
   SearchMode,
 } from "../types/rag";
+import DocumentUpload from "./DocumentUpload";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -86,7 +87,7 @@ export default function Sidebar({
           ))}
         </div>
       </section>
-
+      <DocumentUpload></DocumentUpload>
       <section className="sidebar-section conversation-list" aria-labelledby="history-label">
         <div className="sidebar-label" id="history-label">
           Local Session

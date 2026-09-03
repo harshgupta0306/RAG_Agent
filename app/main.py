@@ -62,3 +62,22 @@
 
 # if __name__ == "__main__":
 #     main()
+
+from app.ingestion.pipeline import ingest_file
+
+
+chunks = ingest_file(
+    "data/resume.pdf"
+)
+
+print("Total chunks:", len(chunks))
+
+for chunk in chunks:
+
+    print("\n--------------------")
+
+    print("Content:")
+    print(chunk.page_content)
+
+    print("\nMetadata:")
+    print(chunk.metadata)

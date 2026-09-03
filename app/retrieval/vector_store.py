@@ -33,7 +33,6 @@ def create_vector_store(
 
     return vector_store
 
-
 def load_vector_store():
 
     embedding_model = get_embedding_model()
@@ -43,3 +42,20 @@ def load_vector_store():
         embedding_model,
         allow_dangerous_deserialization=True,
     )
+
+def add_documents_to_vector_store(
+    documents: list[Document],
+):
+
+    vector_store = load_vector_store()
+
+    vector_store.add_documents(
+        documents,
+  
+    )
+
+    vector_store.save_local(
+        VECTOR_STORE_PATH
+    )
+    return vector_store
+

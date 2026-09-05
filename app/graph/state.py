@@ -6,6 +6,7 @@ from langchain_core.documents import Document
 class RAGState(TypedDict):
 
     query: str
+    notebook_id: str
 
     search_mode: str
 

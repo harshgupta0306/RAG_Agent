@@ -2,20 +2,23 @@ import json
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from uuid import uuid4
-
+from app.api.notebooks import get_db, router as notebooks_router
 from fastapi import (
     File,
     HTTPException,
     UploadFile,
 )
-
+from app.db.models import Notebook
+from app.db.models import Document
 from app.ingestion.pipeline import ingest_file
 from app.graph.main_graph import main_graph
+from sqlalchemy.orm import Session
+
 
 app = FastAPI(
     title="Advanced Agentic RAG API",
@@ -31,6 +34,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(notebooks_router)
 
 class TimeTravelRequest(BaseModel):
 
@@ -42,6 +46,7 @@ class QueryRequest(BaseModel):
     query: str
     search_mode: str = "auto"
     thread_id: str
+    notebook_id: str
 
 
 @app.get("/health")
@@ -66,7 +71,8 @@ def stream_rag(request: QueryRequest):
     initial_state = {
         "query": request.query,
         "search_mode": request.search_mode,
-
+        "notebook_id": request.notebook_id,
+        "thread_id": thread_id,
         "documents": [],
         "context": "",
         "answer": "",
@@ -384,10 +390,19 @@ async def resume_from_checkpoint(
 UPLOAD_DIR = Path("data/documents")
 
 
-@app.post("/api/documents/upload")
+@app.post("/api/notebooks/{notebook_id}/documents")
 async def upload_document(
-    file: UploadFile = File(...)):
+    notebook_id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)):
 
+    notebook = db.get(Notebook, notebook_id)
+
+    if not notebook:
+        raise HTTPException(
+            status_code=404,
+            detail="Notebook not found",
+    )
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -433,8 +448,22 @@ async def upload_document(
                 buffer.write(chunk)
 
         chunks = ingest_file(
-            str(file_path)
+            str(file_path),
+            notebook_id=notebook_id
         )
+        document = Document(
+        id=document_id,
+        notebook_id=notebook_id,
+        file_name=file.filename,
+        file_type=extension.lstrip("."),
+        file_path=str(file_path),
+        status="indexed",
+        chunks=len(chunks),
+    )
+
+        db.add(document)
+        db.commit()
+        db.refresh(document)
 
     except Exception as exc:
 
@@ -448,9 +477,10 @@ async def upload_document(
         )
 
     return {
-        "document_id": document_id,
-        "file_name": file.filename,
-        "file_type": extension.lstrip("."),
-        "chunks": len(chunks),
-        "status": "indexed",
+        "document_id": document.id,
+        "notebook_id": notebook_id,
+        "file_name": document.file_name,
+        "file_type": document.file_type,
+        "chunks": document.chunks,
+        "status": document.status,
     }

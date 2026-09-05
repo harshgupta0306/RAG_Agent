@@ -13,7 +13,7 @@ def semantic_search_node(state):
 
     query = state["query"]
 
-    vector_store = get_vector_store()
+    vector_store = get_vector_store(state["notebook_id"])
 
     documents = vector_store.similarity_search(
         query,
@@ -29,7 +29,7 @@ def keyword_search_node(state):
 
     query = state["query"]
 
-    bm25 = get_bm25()
+    bm25 = get_bm25(state["notebook_id"])
 
     results = bm25.search(
         query,

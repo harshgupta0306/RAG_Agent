@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useParams } from "react-router";
+
 import { uploadDocument } from "../api/rag";
 
 const SUPPORTED_EXTENSIONS = [
@@ -10,8 +12,8 @@ const SUPPORTED_EXTENSIONS = [
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
-
 const DocumentUpload: React.FC = () => {
+  const { notebookId } = useParams<{ notebookId: string }>();
 
   const [selectedFile, setSelectedFile] =
     useState<File | null>(null);
@@ -19,11 +21,12 @@ const DocumentUpload: React.FC = () => {
   const [error, setError] =
     useState<string | null>(null);
 
+  const [uploading, setUploading] =
+    useState(false);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -32,10 +35,7 @@ const DocumentUpload: React.FC = () => {
 
     setError(null);
 
-    // -------------------------
     // Validate extension
-    // -------------------------
-
     const extension =
       "." +
       file.name
@@ -44,54 +44,65 @@ const DocumentUpload: React.FC = () => {
         ?.toLowerCase();
 
     if (
-      !SUPPORTED_EXTENSIONS.includes(
-        extension
-      )
+      !SUPPORTED_EXTENSIONS.includes(extension)
     ) {
       setError(
         "Unsupported file type. Please upload PDF, DOCX, MD or TXT."
       );
 
       setSelectedFile(null);
-
       return;
     }
 
-    // -------------------------
     // Validate size
-    // -------------------------
-
     if (file.size > MAX_FILE_SIZE) {
-
       setError(
         "File size must be less than 10 MB."
       );
 
       setSelectedFile(null);
-
       return;
     }
 
-    // -------------------------
     // Store file
-    // -------------------------
-
     setSelectedFile(file);
   };
 
-
-  const handleUpload = () => {
-
+  const handleUpload = async () => {
     if (!selectedFile) {
       return;
     }
-    uploadDocument(selectedFile);
-    console.log(
-      "File ready for upload:",
-      selectedFile
-    );
-  };
 
+    if (!notebookId) {
+      setError("Notebook ID is missing.");
+      return;
+    }
+
+    try {
+      setError(null);
+      setUploading(true);
+
+      const result = await uploadDocument(
+        selectedFile,
+        notebookId
+      );
+
+      console.log(
+        "Upload successful:",
+        result
+      );
+
+      setSelectedFile(null);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to upload document."
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="document-upload">
@@ -100,11 +111,11 @@ const DocumentUpload: React.FC = () => {
         type="file"
         accept=".pdf,.docx,.md,.txt"
         onChange={handleFileChange}
+        disabled={uploading}
       />
 
       {selectedFile && (
         <div>
-
           <p>
             {selectedFile.name}
           </p>
@@ -116,10 +127,12 @@ const DocumentUpload: React.FC = () => {
           <button
             type="button"
             onClick={handleUpload}
+            disabled={uploading}
           >
-            Upload
+            {uploading
+              ? "Uploading..."
+              : "Upload"}
           </button>
-
         </div>
       )}
 

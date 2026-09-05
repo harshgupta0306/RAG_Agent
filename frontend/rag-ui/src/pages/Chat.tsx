@@ -16,15 +16,16 @@ import type {
   SearchMode,
   StreamEvent,
 } from "../types/rag";
-import AgentTimeline from "./AgentTimeline";
-import ChatInput from "./ChatInput";
-import ChatMessage from "./ChatMessage";
-import CheckpointTimeline from "./CheckpointTimeline";
-import EmptyState from "./EmptyState";
-import ErrorCard from "./ErrorCard";
-import Header from "./Header";
-import RetrievedDocuments from "./RetrievedDocuments";
-import Sidebar from "./Sidebar";
+import AgentTimeline from "../components/AgentTimeline";
+import ChatInput from "../components/ChatInput";
+import ChatMessage from "../components/ChatMessage";
+import CheckpointTimeline from "../components/CheckpointTimeline";
+import EmptyState from "../components/EmptyState";
+import ErrorCard from "../components/ErrorCard";
+import Header from "../components/Header";
+import RetrievedDocuments from "../components/RetrievedDocuments";
+import Sidebar from "../components/Sidebar";
+import { useParams } from "react-router";
 
 interface ConversationSnapshot extends ConversationSummary {
   answer: string;
@@ -116,6 +117,10 @@ export default function Chat() {
       ),
     [snapshots],
   );
+
+  const { notebookId } = useParams<{
+  notebookId: string;
+}>();
 
   function saveSnapshot(overrides: Partial<ConversationSnapshot> = {}) {
     const submittedQuery = overrides.lastSubmittedQuery ?? lastSubmittedQuery;
@@ -224,6 +229,7 @@ export default function Chat() {
         submittedQuery,
         activeMode,
         activeThreadId,
+        notebookId!,
         event => {
           if (event.type === "node") {
             const node = createNode(event);

@@ -4,13 +4,12 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 from langchain_mistralai import ChatMistralAI
+from app.llm.llm import llm
 
-load_dotenv()
 class SearchRoute(BaseModel):
 
     route: Literal[
         "semantic",
-        "keyword",
         "hybrid",
     ] = Field(
         description=(
@@ -19,11 +18,6 @@ class SearchRoute(BaseModel):
         )
     )
 
-
-llm = ChatMistralAI(
-    model="mistral-small-latest",
-    temperature=0,
-)
 
 
 router_llm = llm.with_structured_output(

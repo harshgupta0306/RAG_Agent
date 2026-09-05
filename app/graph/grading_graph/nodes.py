@@ -3,18 +3,19 @@ from typing import Literal
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
-from langchain_mistralai import ChatMistralAI
+# from langchain_mistralai import ChatMistralAI
 
-load_dotenv()
+# load_dotenv()
+from app.llm.llm import llm
 
 # ============================================================
 # LLM
 # ============================================================
 
-llm = ChatMistralAI(
-    model="mistral-small-latest",
-    temperature=0,
-)
+# llm = ChatMistralAI(
+#     model="mistral-small-latest",
+#     temperature=0,
+# )
 
 
 # ============================================================
@@ -108,6 +109,7 @@ FEEDBACK: <short explanation>
 """
 
     result = grader_llm.invoke(prompt)
+    print(result)
 
     return {
         "grade": result.grade,

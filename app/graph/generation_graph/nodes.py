@@ -1,12 +1,14 @@
-from dotenv import load_dotenv
-from langchain_mistralai import ChatMistralAI
+# from dotenv import load_dotenv
+# from langchain_mistralai import ChatMistralAI
 
-load_dotenv()
 
-llm = ChatMistralAI(
-    model="mistral-small-latest",
-    temperature=0,
-)
+from app.llm.llm import llm
+# load_dotenv()
+
+# llm = ChatMistralAI(
+#     model="mistral-small-latest",
+#     temperature=0,
+# )
 
 
 

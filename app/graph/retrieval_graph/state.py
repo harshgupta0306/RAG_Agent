@@ -6,7 +6,6 @@ from langchain_core.documents import Document
 SearchMode = Literal[
     "auto",
     "semantic",
-    "keyword",
     "hybrid",
 ]
 
@@ -14,6 +13,7 @@ SearchMode = Literal[
 class RetrievalState(TypedDict):
 
     query: str
+    notebook_id: str
 
     search_mode: SearchMode
 

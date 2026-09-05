@@ -13,6 +13,7 @@ export async function streamRAG(
   query: string,
   searchMode: SearchMode,
   threadId: string,
+  notebookId: string,
   onEvent: (event: StreamEvent) => void,
 ) {
 
@@ -33,6 +34,7 @@ export async function streamRAG(
         query,
         search_mode: searchMode,
         thread_id: threadId,
+        notebook_id: notebookId,
       }),
     }
   );
@@ -248,6 +250,7 @@ export async function resumeFromCheckpoint(
 
 export interface DocumentUploadResponse {
   document_id: string;
+  notebook_id: string;
   file_name: string;
   file_type: string;
   chunks: number;
@@ -256,7 +259,8 @@ export interface DocumentUploadResponse {
 
 
 export const uploadDocument = async (
-  file: File
+  file: File,
+  notebookId: string
 ): Promise<DocumentUploadResponse> => {
 
   const formData = new FormData();
@@ -267,7 +271,7 @@ export const uploadDocument = async (
   );
 
   const response = await fetch(
-    `${API_URL}/api/documents/upload`,
+    `${API_URL}/api/notebooks/${notebookId}/documents`,
     {
       method: "POST",
       body: formData,

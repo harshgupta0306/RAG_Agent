@@ -44,31 +44,56 @@ SOURCE {i}
 
 
 def generate_answer(state):
+    print(
+        "CONVERSATION HISTORY:",
+        state.get("conversation_history", []),
+        flush=True,
+    )
 
     query = state["query"]
     context = state["context"]
+    conversation_history = state.get(
+        "conversation_history",
+        [],
+    )
+
+    history_text = "\n".join(
+        f'{message["role"].upper()}: {message["content"]}'
+        for message in conversation_history
+    )
 
     prompt = f"""
-    You are a RAG assistant.
+You are a RAG assistant.
 
-    Answer the user's question using ONLY the
-    retrieved context provided below.
+Answer the user's current question using the
+retrieved context provided below.
 
-    If the context does not contain enough
-    information to answer the question, clearly
-    say that the available context is insufficient.
+You may use the conversation history to understand
+references, follow-up questions, and context from
+previous turns.
 
-    Do not invent or assume information that is
-    not present in the context.
+Do NOT use information from the conversation history
+as factual evidence unless that information is also
+supported by the retrieved context.
 
-    Question:
-    {query}
+If the retrieved context does not contain enough
+information to answer the current question, clearly
+say that the available context is insufficient.
 
-    Retrieved Context:
-    {context}
+Do not invent or assume information that is not
+present in the retrieved context.
 
-    Provide a clear and direct answer to the question.
-    """
+Conversation History:
+{history_text}
+
+Current Question:
+{query}
+
+Retrieved Context:
+{context}
+
+Provide a clear and direct answer to the current question.
+"""
 
     response = llm.invoke(prompt)
 

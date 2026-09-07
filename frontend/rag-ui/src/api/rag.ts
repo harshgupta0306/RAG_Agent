@@ -1,7 +1,7 @@
 import type {
   SearchMode,
   StreamEvent,
-  CheckpointHistory
+  CheckpointHistory,
 } from "../types/rag";
 
 
@@ -12,7 +12,7 @@ const API_URL =
 export async function streamRAG(
   query: string,
   searchMode: SearchMode,
-  threadId: string,
+  conversationId: string,
   notebookId: string,
   onEvent: (event: StreamEvent) => void,
 ) {
@@ -33,7 +33,7 @@ export async function streamRAG(
       body: JSON.stringify({
         query,
         search_mode: searchMode,
-        thread_id: threadId,
+        conversation_id: conversationId,
         notebook_id: notebookId,
       }),
     }

@@ -1,5 +1,0 @@
-LangGraph is a framework for building stateful applications.
-
-LangGraph supports persistence using checkpoints.
-
-Human-in-the-loop workflows can pause execution using interrupts.

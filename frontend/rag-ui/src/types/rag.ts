@@ -67,9 +67,11 @@ export type StreamEvent =
     | ErrorEvent;
 
 export type NodeStatus =
+  | "pending"
   | "running"
   | "completed"
-  | "error";
+  | "failed"
+  | "skipped";
 
 export interface NodeState {
   id: string;
@@ -98,4 +100,39 @@ export interface ConversationSummary {
   createdAt: number;
   updatedAt: number;
   checkpointCount: number;
+}
+
+// -------------------------------------------------
+// Backend-aligned types
+// -------------------------------------------------
+
+export interface Conversation {
+  id: string;
+  notebook_id: string;
+  title: string;
+  thread_id: string;
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface DocumentMeta {
+  document_id: string;
+  notebook_id: string;
+  file_name: string;
+  file_type: string;
+  chunks: number;
+  status: string;
+}
+
+// Citation UI placeholder — ready for future backend support
+export interface Citation {
+  index: number;
+  filename: string;
+  page?: number | string;
+  chunkId?: string;
 }

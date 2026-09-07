@@ -21,3 +21,7 @@ class RAGState(TypedDict):
     feedback: str
     rewritten_query: str
     retry_count: int
+
+    conversation_history: list[dict[str, str]]
+
+    route: str

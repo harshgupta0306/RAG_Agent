@@ -25,6 +25,8 @@ from app.graph.rewrite_graph.graph import (
     rewrite_graph,
 )
 
+from app.graph.chat_graph.graph import chat_graph
+from app.graph.router import route_query
 from app.graph.state import RAGState
 
 
@@ -47,6 +49,9 @@ def grade_route(state):
 
     return "retry"
 
+
+
+
 def apply_rewrite(state):
 
     return {
@@ -65,6 +70,16 @@ builder = StateGraph(
 # ============================================================
 # SUBGRAPHS
 # ============================================================
+
+builder.add_node(
+    "router",
+    route_query,
+)
+
+builder.add_node(
+    "chat",
+    chat_graph,
+)
 
 builder.add_node(
     "retrieval",
@@ -92,11 +107,21 @@ builder.add_node(
 # ============================================================
 # FLOW
 # ============================================================
-
 builder.add_edge(
     START,
-    "retrieval",
+    "router",
 )
+
+builder.add_conditional_edges(
+    "router",
+    lambda state: state["route"],
+    {
+        "chat": "chat",
+        "rag": "retrieval",
+    },
+)
+
+
 
 builder.add_edge(
     "retrieval",
@@ -125,6 +150,11 @@ builder.add_edge(
 builder.add_edge(
     "apply_rewrite",
     "retrieval",
+)
+
+builder.add_edge(
+    "chat",
+    END,
 )
 # ============================================================
 # COMPILE

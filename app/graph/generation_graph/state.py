@@ -6,9 +6,7 @@ from langchain_core.documents import Document
 class GenerationState(TypedDict):
 
     query: str
-
+    conversation_history: list[dict[str, str]]
     documents: list[Document]
-
     context: str
-
     answer: str

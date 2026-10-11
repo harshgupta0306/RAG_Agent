@@ -122,6 +122,7 @@ async def upload_document(
         chunks = ingest_file(
             str(file_path),
             notebook_id=notebook_id,
+            original_filename=file.filename,
         )
 
         # --------------------------------
@@ -152,7 +153,9 @@ async def upload_document(
             status_code=500,
             detail=str(exc),
         )
-
+    finally:
+        
+        file_path.unlink(missing_ok=True)
     return {
         "document_id": document.id,
         "notebook_id": notebook_id,

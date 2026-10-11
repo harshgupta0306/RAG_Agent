@@ -14,9 +14,8 @@ def route_query(state) -> Literal["chat", "rag"]:
         }
 
     if search_mode == "rag":
-        return {
-            "route": "rag"
-        }
+        return {"route": "rag",
+            "search_mode": "auto"}
 
     # Auto mode
     conversation_history = state.get(
@@ -74,4 +73,5 @@ RAG
     if decision == "CHAT":
         return {"route": "chat"}
 
-    return {"route": "rag"}
+    return {"route": "rag",
+            "search_mode": "auto"}

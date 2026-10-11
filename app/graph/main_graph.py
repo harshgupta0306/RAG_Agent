@@ -35,6 +35,16 @@ MAX_RETRIES = 2
 checkpointer = InMemorySaver()
 
 
+def route_from_state(state):
+    route = state.get("route")
+
+    print("========== ROUTER DEBUG ==========")
+    print("ROUTE:", repr(route))
+    print("STATE:", state)
+    print("==================================")
+
+    return route
+
 def grade_route(state):
 
     print("QUERY:", state["query"])
@@ -114,7 +124,7 @@ builder.add_edge(
 
 builder.add_conditional_edges(
     "router",
-    lambda state: state["route"],
+    route_from_state,
     {
         "chat": "chat",
         "rag": "retrieval",

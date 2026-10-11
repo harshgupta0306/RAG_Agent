@@ -1,7 +1,7 @@
 export type SearchMode =
   | "auto"
-  | "semantic"
-  | "hybrid";
+  | "chat"
+  | "rag";
 
 
 export type AgentNode =
@@ -19,6 +19,7 @@ export type AgentNode =
 export interface NodeEvent {
     type: "node";
     node: AgentNode | string;
+    checkpoint_id: string;
     data?: Record<string, unknown>;
 }
 
@@ -75,6 +76,7 @@ export type NodeStatus =
 
 export interface NodeState {
   id: string;
+  checkpoint_id:string;
   node: AgentNode | string;
   status: NodeStatus;
   data?: Record<string, unknown>;

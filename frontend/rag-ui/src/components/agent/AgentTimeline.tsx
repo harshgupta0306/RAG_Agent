@@ -4,11 +4,13 @@ import AgentNode from "./AgentNode";
 interface AgentTimelineProps {
   nodes: NodeState[];
   running: boolean;
+  onResume: (checkpointId: string) => void;
 }
 
 export default function AgentTimeline({
   nodes,
   running,
+  onResume
 }: AgentTimelineProps) {
   return (
     <section className="agent-timeline" aria-labelledby="agent-timeline-title">
@@ -19,7 +21,7 @@ export default function AgentTimeline({
 
       <div className="agent-timeline-nodes">
         {nodes.map(node => (
-          <AgentNode key={node.id} node={node} />
+          <AgentNode key={node.id} node={node} onResume={onResume} timeTravelLoading={running ?? false} />
         ))}
 
         {running && (

@@ -42,7 +42,7 @@ export default function RetrievedDocuments({ documents }: RetrievedDocumentsProp
         {documents.map((doc, index) => {
           const content = getDocContent(doc);
           const meta = doc.metadata;
-          const filename = getMetaValue(meta, ["filename", "file_name", "source", "path"])
+          const filename = getMetaValue(meta, ["name", "file_name", "source", "path"])
             ?? doc.chunk_id
             ?? `Source ${index + 1}`;
           const page = getMetaValue(meta, ["page", "page_number"]);
@@ -67,9 +67,9 @@ export default function RetrievedDocuments({ documents }: RetrievedDocumentsProp
                 <div className="retrieved-info">
                   <span className="retrieved-name">{filename}</span>
                   <span className="retrieved-meta">
-                    {page && <span>Page {page}</span>}
-                    {doc.chunk_id && <span>{doc.chunk_id}</span>}
-                    {score && <span>Score {score}</span>}
+                    {page && <span className="retrieved-page">Page {page}</span>}
+                    {doc.chunk_id && <span className="retrieved-chunk-id">Chunk {doc.chunk_id}</span>}
+                    {score && <span className="retrieved-score">Score {score}</span>}
                   </span>
                 </div>
                 <span className="retrieved-chevron" aria-hidden="true">▾</span>

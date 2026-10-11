@@ -64,13 +64,13 @@ export default function AgentPanel({
         >
           Trace ({nodes.length})
         </button>
-        <button
+        {/* <button
           type="button"
           className={`agent-tab-btn ${activeTab === "checkpoints" ? "active" : ""}`}
           onClick={() => setActiveTab("checkpoints")}
         >
           Checkpoints ({checkpoints.length})
-        </button>
+        </button> */}
         <button
           type="button"
           className={`agent-tab-btn ${activeTab === "sources" ? "active" : ""}`}
@@ -90,7 +90,7 @@ export default function AgentPanel({
         ) : (
           <>
             {(activeTab === "all" || activeTab === "trace") && (nodes.length > 0 || running) && (
-              <AgentTimeline nodes={nodes} running={running || timeTravelLoading} />
+              <AgentTimeline nodes={nodes} running={running || timeTravelLoading} onResume={onResume} />
             )}
 
             {(activeTab === "all" || activeTab === "sources") && retrievedDocuments.length > 0 && (
@@ -99,14 +99,14 @@ export default function AgentPanel({
               </div>
             )}
 
-            {(activeTab === "all" || activeTab === "checkpoints") && checkpoints.length > 0 && (
+            {/* {(activeTab === "all" || activeTab === "checkpoints") && checkpoints.length > 0 && (
               <CheckpointSection
                 checkpoints={checkpoints}
                 selectedCheckpoint={selectedCheckpoint}
                 onResume={onResume}
                 loading={timeTravelLoading}
               />
-            )}
+            )} */}
           </>
         )}
       </div>

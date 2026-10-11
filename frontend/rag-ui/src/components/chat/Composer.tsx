@@ -13,8 +13,8 @@ interface ComposerProps {
 
 const modes: Array<{ value: SearchMode; label: string }> = [
   { value: "auto", label: "Auto" },
-  { value: "hybrid", label: "Chat" },
-  { value: "semantic", label: "RAG" },
+  { value: "chat", label: "Chat" },
+  { value: "rag", label: "RAG" },
 ];
 
 export default function Composer({

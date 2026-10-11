@@ -13,7 +13,7 @@ interface MessageProps {
 function getFilename(doc: RetrievedDocument, index: number) {
   const md = doc.metadata ?? {};
   return (
-    (md["filename"] as string) ||
+    (md["name"] as string) ||
     (md["file_name"] as string) ||
     doc.chunk_id ||
     "Source " + String(index + 1)

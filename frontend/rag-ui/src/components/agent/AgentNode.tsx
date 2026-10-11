@@ -2,6 +2,8 @@ import type { NodeState } from "../../types/rag";
 
 interface AgentNodeProps {
   node: NodeState;
+  onResume: (checkpointId: string) => void;
+  timeTravelLoading: boolean;
 }
 
 const labels: Record<string, string> = {
@@ -81,7 +83,11 @@ function getDuration(node: NodeState) {
   return `${Math.max(ms, 1)}ms`;
 }
 
-export default function AgentNode({ node }: AgentNodeProps) {
+export default function AgentNode({
+  node,
+  onResume,
+  timeTravelLoading,
+}: AgentNodeProps) {
   const duration = getDuration(node);
   const dataEntries = Object.entries(node.data ?? {}).filter(
     ([, v]) => v !== undefined && v !== null
@@ -112,6 +118,16 @@ export default function AgentNode({ node }: AgentNodeProps) {
               <code className="agent-detail-val">{renderValue(value)}</code>
             </div>
           ))
+        )}
+        {node.checkpoint_id && (
+          <button
+            type="button"
+            className="btn-sm checkpoint-resume"
+            onClick={() => onResume(node.checkpoint_id!)}
+            disabled={timeTravelLoading}
+          >
+            {timeTravelLoading ? "Resuming…" : "Resume from this step"}
+          </button>
         )}
       </div>
     </details>

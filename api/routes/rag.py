@@ -28,10 +28,21 @@ def document_to_dict(document):
     }
 
 
-def create_node_payload(node_name, state_update):
+def get_latest_checkpoint_id(thread_id: str):
+    """Return the latest persisted checkpoint for a graph thread, if available."""
+    state = main_graph.get_state({
+        "configurable": {
+            "thread_id": thread_id,
+        }
+    })
+    return state.config.get("configurable", {}).get("checkpoint_id")
+
+
+def create_node_payload(node_name, state_update, checkpoint_id=None):
     payload = {
         "type": "node",
         "node": node_name,
+        "checkpoint_id": checkpoint_id,
         "data": {},
     }
     if node_name == "chat":
@@ -213,12 +224,15 @@ def stream_rag(
 
         try:
 
+            pending_node_updates = []
+
             for mode, data in main_graph.stream(
                 initial_state,
                 config=config,
                 stream_mode=[
                     "updates",
                     "messages",
+                    "checkpoints",
                 ],
             ):
 
@@ -228,22 +242,31 @@ def stream_rag(
 
                 if mode == "updates":
 
-                    for node_name, state_update in data.items():
+                    # Buffer node updates until LangGraph emits the checkpoint
+                    # created for that graph step. This avoids attaching a
+                    # stale "latest" checkpoint to the node event.
+                    pending_node_updates.extend(data.items())
 
-                        payload = create_node_payload(
+                    # Capture final answer as soon as its update arrives.
+                    for node_name, state_update in data.items():
+                        if node_name in {"generation", "chat"}:
+                            answer = state_update.get("answer", "")
+
+                elif mode == "checkpoints":
+                    checkpoint_id = (
+                        data.get("config", {})
+                        .get("configurable", {})
+                        .get("checkpoint_id")
+                    )
+
+                    for node_name, state_update in pending_node_updates:
+                        yield sse(create_node_payload(
                             node_name,
                             state_update,
-                        )
+                            checkpoint_id=checkpoint_id,
+                        ))
 
-                        # Capture final answer
-                        if node_name in {"generation", "chat"}:
-
-                            answer = state_update.get(
-                                "answer",
-                                "",
-                            )
-
-                        yield sse(payload)
+                    pending_node_updates.clear()
 
                 # ==================================================
                 # LLM MESSAGE STREAM
@@ -267,6 +290,15 @@ def stream_rag(
                         }
 
                         yield sse(payload)
+
+            if pending_node_updates:
+                checkpoint_id = get_latest_checkpoint_id(thread_id)
+                for node_name, state_update in pending_node_updates:
+                    yield sse(create_node_payload(
+                        node_name,
+                        state_update,
+                        checkpoint_id=checkpoint_id,
+                    ))
 
             # ======================================================
             # 7. Save ASSISTANT message
@@ -418,12 +450,15 @@ async def resume_from_checkpoint(
 
         try:
 
+            pending_node_updates = []
+
             for mode, data in main_graph.stream(
                 None,
                 config=config,
                 stream_mode=[
                     "updates",
                     "messages",
+                    "checkpoints",
                 ],
             ):
 
@@ -433,14 +468,23 @@ async def resume_from_checkpoint(
 
                 if mode == "updates":
 
-                    for node_name, state_update in data.items():
+                    pending_node_updates.extend(data.items())
 
-                        payload = create_node_payload(
+                elif mode == "checkpoints":
+                    checkpoint_id = (
+                        data.get("config", {})
+                        .get("configurable", {})
+                        .get("checkpoint_id")
+                    )
+
+                    for node_name, state_update in pending_node_updates:
+                        yield sse(create_node_payload(
                             node_name,
                             state_update,
-                        )
+                            checkpoint_id=checkpoint_id,
+                        ))
 
-                        yield sse(payload)
+                    pending_node_updates.clear()
 
                 # ----------------------------------------------
                 # Token events
@@ -456,6 +500,15 @@ async def resume_from_checkpoint(
                             "type": "token",
                             "content": message_chunk.content,
                         })
+
+            if pending_node_updates:
+                checkpoint_id = get_latest_checkpoint_id(request.thread_id)
+                for node_name, state_update in pending_node_updates:
+                    yield sse(create_node_payload(
+                        node_name,
+                        state_update,
+                        checkpoint_id=checkpoint_id,
+                    ))
 
             yield sse({
                 "type": "done"

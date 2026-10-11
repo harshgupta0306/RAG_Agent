@@ -22,6 +22,7 @@ SUPPORTED_EXTENSIONS = {
 def ingest_file(
     file_path: str,
     notebook_id: str,
+    original_filename:str,
 ) -> list[Document]:
 
     path = Path(file_path)
@@ -38,6 +39,7 @@ def ingest_file(
     for document in documents:
         document.metadata["source"] = path.name
         document.metadata["notebook_id"] = notebook_id
+        document.metadata["name"] = original_filename
 
     chunks = split_documents(
         documents

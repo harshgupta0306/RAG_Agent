@@ -107,6 +107,163 @@ a { color: var(--accent-text); }
 }
 
 /* ═══════════════════════════════════════════════════════════
+   TYPOGRAPHY SPECIFICATION (Design System Standards)
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. App / notebook name | Inter 600 */
+.brand-name,
+.header-brand h1,
+.header-brand-title,
+.header-notebook-select,
+.notebook-card-title,
+.chat-title,
+.notebooks-page-title,
+.modal-header h3 {
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+}
+
+/* 2. Sidebar items | Inter 400–500 */
+.sidebar,
+.sources-panel,
+.document-row,
+.doc-name,
+.conv-title,
+.conversation-item,
+.sidebar-empty-text {
+  font-family: var(--sans);
+  font-weight: 400;
+}
+
+.sources-title,
+.section-label,
+.conversation-item.active .conv-title,
+.document-row.selected .doc-name,
+.document-row:hover .doc-name {
+  font-family: var(--sans);
+  font-weight: 500;
+}
+
+/* 3. Chat messages | Inter 400 */
+.message,
+.message.user,
+.message.user .message-content,
+.message.user .message-content p,
+.chat-messages-area,
+.message-content {
+  font-family: var(--sans) !important;
+  font-weight: 400 !important;
+}
+
+/* 4. Assistant answer | Inter 400 */
+.message.assistant,
+.message.assistant .message-content,
+.markdown-content,
+.markdown-content p,
+.markdown-content li,
+.streaming-answer {
+  font-family: var(--sans) !important;
+  font-weight: 400 !important;
+}
+
+/* 5. Buttons | Inter 500 */
+button,
+.btn-primary,
+.btn-secondary,
+.panel-toggle-btn,
+.mode-btn,
+.nav-btn-primary,
+.nav-btn-secondary,
+.notebook-open-btn,
+.composer-send,
+.checkpoint-resume,
+.agent-tab-btn,
+.sources-select-all-btn,
+.btn-sm,
+.btn-icon,
+.btn-text,
+.hero-btn-lg,
+.landing-cta-btn,
+.doc-delete-btn,
+.notebook-delete-btn,
+.modal-close-btn,
+.notebooks-search-clear {
+  font-family: var(--sans) !important;
+  font-weight: 500 !important;
+}
+
+/* 6. Agent node names | Inter 500 */
+.agent-node-name,
+.agent-section-header h3,
+.checkpoint-label,
+.arch-node h4,
+.agent-panel-header h2 {
+  font-family: var(--sans) !important;
+  font-weight: 500 !important;
+}
+
+/* 7. File metadata | JetBrains Mono 400 */
+.doc-meta,
+.doc-meta span,
+.doc-type-badge,
+.doc-status,
+.notebook-meta-pill,
+.sources-badge,
+.file-meta,
+.file-size,
+.retrieved-metadata,
+.retrieved-meta-row span,
+.retrieved-page,
+.header-status,
+.agent-node-meta,
+.citation-meta {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+}
+
+/* 8. Chunk IDs | JetBrains Mono 400 */
+.chunk-id,
+.doc-chunk-id,
+.retrieved-chunk-id,
+.citation-idx {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+}
+
+/* 9. Checkpoint IDs | JetBrains Mono 400 */
+.checkpoint-id,
+.checkpoint-idx,
+.checkpoint-next,
+.checkpoint-dl dd,
+.checkpoint-dl dt {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+}
+
+/* 10. Retrieval scores | JetBrains Mono 400 */
+.retrieval-score,
+.retrieved-score,
+.doc-score {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+}
+
+/* 11. Code | JetBrains Mono 400 */
+code,
+pre,
+pre code,
+.code-block,
+.inline-code,
+.markdown-content code,
+.markdown-content pre,
+.markdown-content pre code,
+.agent-detail-val,
+.retrieved-metadata code {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
    WORKSPACE LAYOUT
    ═══════════════════════════════════════════════════════════ */
 
@@ -276,7 +433,8 @@ a { color: var(--accent-text); }
   display: block;
   padding: 0 0 8px;
   font-size: 11px;
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -450,7 +608,7 @@ a { color: var(--accent-text); }
   border-radius: 4px;
   font-family: var(--mono);
   font-size: 9px;
-  font-weight: 700;
+  font-weight: 400;
   flex-shrink: 0;
   background: var(--accent-subtle);
   color: var(--accent-text);
@@ -687,7 +845,8 @@ a { color: var(--accent-text); }
 
 .message-role {
   font-size: 11px;
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -806,7 +965,8 @@ a { color: var(--accent-text); }
 
 .citations-label {
   font-size: 11px;
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -966,8 +1126,9 @@ a { color: var(--accent-text); }
   border-radius: var(--radius-sm);
   background: var(--text);
   color: var(--bg-base);
+  font-family: var(--sans);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   transition: opacity var(--transition), transform var(--transition);
 }
 
@@ -1014,8 +1175,9 @@ a { color: var(--accent-text); }
 }
 
 .agent-panel-header h2 {
+  font-family: var(--sans);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-secondary);
 }
 
@@ -1044,8 +1206,9 @@ a { color: var(--accent-text); }
 }
 
 .agent-section-header h3 {
+  font-family: var(--sans);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
@@ -1369,7 +1532,7 @@ a { color: var(--accent-text); }
   color: var(--accent-text);
   font-family: var(--mono);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .checkpoint-info {
@@ -1685,7 +1848,8 @@ a { color: var(--accent-text); }
 }
 
 .brand-name {
-  font-weight: 700;
+  font-family: var(--sans);
+  font-weight: 600;
   font-size: 16px;
   letter-spacing: -0.02em;
   display: block;
@@ -1742,7 +1906,7 @@ a { color: var(--accent-text); }
   border: 1px solid var(--border-accent);
   color: var(--accent-text);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   font-family: var(--mono);
   margin-bottom: 24px;
 }
@@ -1785,7 +1949,8 @@ a { color: var(--accent-text); }
 .hero-btn-lg {
   padding: 12px 24px;
   font-size: 15px;
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
   border-radius: var(--radius);
   text-decoration: none;
   display: inline-flex;
@@ -1871,14 +2036,15 @@ a { color: var(--accent-text); }
   font-size: 10px;
   font-family: var(--mono);
   color: var(--accent-text);
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 
 .arch-node h4 {
+  font-family: var(--sans);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 6px;
   color: var(--text);
 }
@@ -1913,7 +2079,7 @@ a { color: var(--accent-text); }
   color: var(--accent-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-weight: 600;
+  font-weight: 400;
   display: block;
   margin-bottom: 8px;
 }
@@ -2063,8 +2229,9 @@ a { color: var(--accent-text); }
   background: var(--accent-subtle);
   border: 1px solid var(--border-accent);
   color: var(--accent-text);
+  font-family: var(--sans);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   padding: 8px 16px;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -2150,7 +2317,8 @@ a { color: var(--accent-text); }
 }
 
 .header-brand-title {
-  font-weight: 700;
+  font-family: var(--sans);
+  font-weight: 600;
   font-size: 14px;
   color: var(--text);
   letter-spacing: -0.01em;
@@ -2159,7 +2327,7 @@ a { color: var(--accent-text); }
 .header-section-badge {
   font-size: 11px;
   font-family: var(--mono);
-  font-weight: 600;
+  font-weight: 400;
   background: var(--accent-subtle);
   border: 1px solid var(--border-accent);
   color: var(--accent-text);
@@ -2170,6 +2338,7 @@ a { color: var(--accent-text); }
 .notebooks-count-badge {
   font-size: 11px;
   font-family: var(--mono);
+  font-weight: 400;
   color: var(--text-muted);
   background: var(--bg-elevated);
   border: 1px solid var(--border);
@@ -2190,8 +2359,9 @@ a { color: var(--accent-text); }
   background: var(--accent-subtle);
   border: 1px solid var(--border-accent);
   color: var(--accent-text);
+  font-family: var(--sans);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   padding: 6px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -2249,8 +2419,9 @@ a { color: var(--accent-text); }
 }
 
 .notebooks-page-title {
+  font-family: var(--sans);
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
@@ -2466,8 +2637,9 @@ a { color: var(--accent-text); }
   background: var(--accent-subtle);
   border: 1px solid var(--border-accent);
   color: var(--accent-text);
+  font-family: var(--sans);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   padding: 6px 14px;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -2592,7 +2764,8 @@ a { color: var(--accent-text); }
 
 .sources-title {
   font-size: 13px;
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
   letter-spacing: -0.01em;
 }
 
@@ -2774,7 +2947,8 @@ a { color: var(--accent-text); }
 .agent-tab-btn.active {
   color: var(--accent-text);
   background: var(--accent-subtle);
-  font-weight: 600;
+  font-family: var(--sans);
+  font-weight: 500;
 }
 
 /* ─── Modal Overlay & Card ───────────────────────────────── */

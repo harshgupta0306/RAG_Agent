@@ -31,6 +31,7 @@ function createNode(event: StreamEvent): NodeState | null {
   const now = Date.now();
   return {
     id: `${now}-${Math.random()}`,
+    checkpoint_id : event.checkpoint_id,
     node: event.node,
     status: "completed",
     data: event.data,

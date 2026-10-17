@@ -123,6 +123,7 @@ async def upload_document(
             str(file_path),
             notebook_id=notebook_id,
             original_filename=file.filename,
+            document_id=document_id
         )
 
         # --------------------------------

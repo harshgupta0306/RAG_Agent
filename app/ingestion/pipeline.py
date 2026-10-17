@@ -10,6 +10,7 @@ from app.retrieval.vector_store import (
     add_documents_to_vector_store,
 )
 
+from app.retrieval.qdrant_store import upsert_chunks
 
 SUPPORTED_EXTENSIONS = {
     ".pdf",
@@ -23,6 +24,7 @@ def ingest_file(
     file_path: str,
     notebook_id: str,
     original_filename:str,
+    document_id:str
 ) -> list[Document]:
 
     path = Path(file_path)
@@ -40,6 +42,7 @@ def ingest_file(
         document.metadata["source"] = path.name
         document.metadata["notebook_id"] = notebook_id
         document.metadata["name"] = original_filename
+        document.metadata["document_id"] = str(document_id)
 
     chunks = split_documents(
         documents
@@ -53,6 +56,11 @@ def ingest_file(
     add_documents_to_vector_store(
         chunks,
         notebook_id,
+    )
+    upsert_chunks(
+        chunks=chunks,
+        notebook_id=notebook_id,
+        document_id=document_id,
     )
     clear_notebook_resources(notebook_id)
 

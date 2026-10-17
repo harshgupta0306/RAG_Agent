@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { NodeState, RetrievedDocument, Checkpoint } from "../../types/rag";
 import AgentTimeline from "../agent/AgentTimeline";
 import RetrievedDocuments from "../agent/RetrievedDocuments";
-import CheckpointSection from "../agent/CheckpointSection";
+// import CheckpointSection from "../agent/CheckpointSection";
 import EmptyState from "../shared/EmptyState";
 
 interface AgentPanelProps {
@@ -22,7 +22,7 @@ export default function AgentPanel({
   running,
   retrievedDocuments,
   checkpoints,
-  selectedCheckpoint,
+  // selectedCheckpoint,
   timeTravelLoading,
   onResume,
 }: AgentPanelProps) {
